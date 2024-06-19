@@ -4,22 +4,22 @@ import postgres from "postgres";
 import { env } from "@/env";
 
 declare global {
-  var database: PostgresJsDatabase<typeof schema> | undefined;
+  var db: PostgresJsDatabase<typeof schema> | undefined;
 }
 
-let database: PostgresJsDatabase<typeof schema> | undefined;
-let pg: ReturnType<typeof postgres> | undefined;
+let db: PostgresJsDatabase<typeof schema>;
+let pg: ReturnType<typeof postgres>;
 
 if (env.NODE_ENV === "production") {
   pg = postgres(env.DATABASE_URL);
-  database = drizzle(pg, { schema });
+  db = drizzle(pg, { schema });
 } else {
-  if (!global.database) {
+  if (!global.db) {
     pg = postgres(env.DATABASE_URL);
-    global.database = drizzle(pg, { schema });
+    global.db = drizzle(pg, { schema });
   }
 
-  database = global.database;
+  db = global.db;
 }
 
-export { database, pg };
+export { db, pg };
